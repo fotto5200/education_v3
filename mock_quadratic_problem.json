@@ -1,0 +1,63 @@
+{
+    "metadata": {
+      "user_id": "preview-user",
+      "model_id": "evaluate_quadratic_basic",
+      "cluster": "evaluate_quadratic",
+      "timestamp_created": "2025-03-31T17:30:00Z",
+      "random_seed": 10042,
+      "model_version": "v1.0.0",
+      "delivery_mode": "practice"
+    },
+    "problem_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='400' height='50'><text x='10' y='30' font-size='18'>Evaluate Y = 2X² + 3X - 5 when X = 2</text></svg>",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "step_name": "Substitute value for X",
+        "svg_prompt": "<svg xmlns='http://www.w3.org/2000/svg' width='350' height='40'><text x='10' y='25' font-size='16'>Y = 2(2)² + 3(2) - 5</text></svg>",
+        "answers": [
+          {
+            "type": "correct",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='30'><text x='10' y='20'>8 + 6 - 5</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='250' height='50'><text x='10' y='20'>Correct: You correctly substituted and simplified.</text></svg>"
+          },
+          {
+            "type": "incorrect",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='30'><text x='10' y='20'>4 + 6 - 5</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='280' height='50'><text x='10' y='20'>Mistake: You squared 2 incorrectly.</text></svg>"
+          },
+          {
+            "type": "incorrect",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='30'><text x='10' y='20'>8 + 3 - 5</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='280' height='50'><text x='10' y='20'>Mistake: You used wrong value for 3×2.</text></svg>"
+          }
+        ]
+      },
+      {
+        "step_id": "step_2",
+        "step_name": "Compute result",
+        "svg_prompt": "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='40'><text x='10' y='25'>8 + 6 - 5 = ?</text></svg>",
+        "answers": [
+          {
+            "type": "correct",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='30'><text x='10' y='20'>9</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='160' height='40'><text x='10' y='20'>Correct sum is 9.</text></svg>"
+          },
+          {
+            "type": "incorrect",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='30'><text x='10' y='20'>11</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='240' height='40'><text x='10' y='20'>Added incorrectly: 8 + 6 = 14, then -5 = 9.</text></svg>"
+          },
+          {
+            "type": "incorrect",
+            "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='30'><text x='10' y='20'>13</text></svg>",
+            "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='240' height='40'><text x='10' y='20'>Added without subtracting 5.</text></svg>"
+          }
+        ]
+      }
+    ],
+    "final_answer": {
+      "value": "9",
+      "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='30'><text x='10' y='20'>Final Answer: 9</text></svg>",
+      "explanation_svg": "<svg xmlns='http://www.w3.org/2000/svg' width='280' height='50'><text x='10' y='20'>The final result is Y = 9 after full substitution.</text></svg>"
+    }
+  }
