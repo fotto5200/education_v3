@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "item_author_input_v1.json",
+  "type": "object",
+  "required": ["template_id", "type", "title", "content", "steps", "tags"],
+  "properties": {
+    "template_id": { "type": "string" },
+    "type": { "type": "string" },
+    "title": { "type": "string" },
+    "content": {
+      "type": "object",
+      "required": ["html"],
+      "properties": { "html": { "type": "string" } },
+      "additionalProperties": true
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "object_key", "alt"],
+        "properties": {
+          "id": { "type": "string" },
+          "object_key": { "type": "string" },
+          "alt": { "type": "string" },
+          "long_alt": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step_id", "prompt", "choices"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "prompt": {
+            "type": "object",
+            "required": ["html"],
+            "properties": { "html": { "type": "string" } },
+            "additionalProperties": true
+          },
+          "choices": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "properties": {
+                "id": { "type": "string" },
+                "text": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "hint": { "type": "string" },
+          "explanation": {
+            "type": "object",
+            "properties": { "html": { "type": "string" } },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "final": {
+      "type": "object",
+      "properties": {
+        "answer_text": { "type": "string" },
+        "explanation": {
+          "type": "object",
+          "properties": { "html": { "type": "string" } },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "tags": {
+      "type": "object",
+      "required": ["skill", "difficulty"],
+      "properties": {
+        "skill": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["E", "M", "H"] }
+      },
+      "additionalProperties": true
+    },
+    "content_version": { "type": "integer" },
+    "generator_version": { "type": "string" }
+  },
+  "additionalProperties": true
+}

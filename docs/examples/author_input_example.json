@@ -1,0 +1,22 @@
+{
+  "template_id": "tpl_parallel_lines_v1",
+  "type": "PARALLEL_LINE_FIND_X",
+  "title": "Parallel Lines - Find x",
+  "content": { "html": "Find \\(? x \\)?." },
+  "media": [
+    { "id": "fig1", "object_key": "items/tpl_parallel_lines_v1/fig1.svg", "alt": "Two parallel lines with a transversal" }
+  ],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": { "html": "Is 128° large (obtuse) or small (acute)?" },
+      "choices": [
+        { "id": "A", "text": "Big" },
+        { "id": "B", "text": "Little" }
+      ],
+      "hint": "Little < 90°, big > 90°."
+    }
+  ],
+  "final": { "answer_text": "x = 128°", "explanation": { "html": "..." } },
+  "tags": { "skill": "parallel_lines", "difficulty": "M" }
+}

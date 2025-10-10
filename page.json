@@ -1,0 +1,46 @@
+{
+  "type": "PARALLEL_LINE_FIND_X",
+  "title": "Parallel Lines - Find x",
+  "hasPicture": true,
+  "svg": "<svg width=\"700\" height=\"500\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"translate(0,200)\"><line x1=\"60\" y1=\"60\" x2=\"320\" y2=\"260\" stroke=\"black\" stroke-width=\"2\" /><line x1=\"40\" y1=\"120\" x2=\"360\" y2=\"120\" stroke=\"black\" stroke-width=\"2\" /><line x1=\"40\" y1=\"200\" x2=\"360\" y2=\"200\" stroke=\"black\" stroke-width=\"2\" /><text x=\"370\" y=\"122\" font-family=\"STIX Two Math, STIX Math, Cambria Math, 'Latin Modern Math', 'TeX Gyre Termes Math', 'Times New Roman', serif\" font-size=\"16\" font-style=\"italic\">𝑚</text><text x=\"370\" y=\"202\" font-family=\"STIX Two Math, STIX Math, Cambria Math, 'Latin Modern Math', 'TeX Gyre Termes Math', 'Times New Roman', serif\" font-size=\"16\" font-style=\"italic\">𝑛</text><text x=\"60\" y=\"55\" font-family=\"STIX Two Math, STIX Math, Cambria Math, 'Latin Modern Math', 'TeX Gyre Termes Math', 'Times New Roman', serif\" font-size=\"16\" font-style=\"italic\">ℓ</text><text x=\"135\" y=\"113\" font-family=\"Georgia\" font-size=\"12\" font-style=\"italic\" text-anchor=\"start\">128°</text><text x=\"240\" y=\"193\" font-family=\"Georgia\" font-size=\"16\" font-style=\"italic\" text-anchor=\"start\">x°</text></g></svg>",
+  "question": "Find the value of x°.",
+  "answers": [],
+  "answerText": "x = 128°",
+  "version": 203,
+  "stepQuestions": [
+    {
+      "question": "Is the given angle (128°) a big angle (obtuse) or a small angle (acute)?",
+      "answers": [
+        "Big",
+        "Little"
+      ],
+      "hint": "Little angles are < 90° and big angles are > 90°."
+    },
+    {
+      "question": "Is x a big angle (obtuse) or a small angle (acute)?",
+      "answers": [
+        "Big",
+        "Little"
+      ],
+      "hint": "Little angles are < 90° and big angles are > 90°."
+    },
+    {
+      "question": "Are the two angles the same size.",
+      "answers": [
+        "Yes",
+        "No"
+      ],
+      "hint": "When a transversal intersects two parallel lines, all small angles are equal and all big angles are equal."
+    },
+    {
+      "question": "How big is angle x?",
+      "answers": [
+        "128°",
+        "52°",
+        "123°",
+        "42°"
+      ],
+      "hint": "Since the two angles are both big angles, look at the given angle."
+    }
+  ]
+}
