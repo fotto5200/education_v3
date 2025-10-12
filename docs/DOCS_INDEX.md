@@ -3,6 +3,7 @@
 - `docs/SYSTEM_OVERVIEW.md` — Canonical overview and decisions.
 - `docs/API_CONTRACT.md` — Serve and submit contracts; links to schemas.
 - `docs/SECURITY_POLICY.md` — Sessions, CSP, anti-scraping.
+- `docs/SECURITY_OVERVIEW.md` — Plain-language goals, controls, tech definitions, strengths/limits.
 - `docs/SERVED_ITEM_SPEC.md` — End-to-end served problem spec.
 - `docs/CONTENT_AUTHORING_SPEC.md` — Authoring requirements and rules.
 - `docs/INGESTION_PIPELINE.md` — Author output → Canonical DB shape.

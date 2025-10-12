@@ -1,10 +1,15 @@
 ## Generic Project Onboarding Checklist (Windows-first, quiet startup)
 
 ### Decisions to date (read first)
-- See `docs/SYSTEM_OVERVIEW.md` for architecture, goals, and data flow.
-- Contracts: `docs/API_CONTRACT.md` and `schemas/`.
-- Security posture: `docs/SECURITY_POLICY.md`.
-- Decision history: `ARCHITECTURE_DECISIONS.md`.
+- See `docs/DOCS_INDEX.md` for the full map of specs, pipelines, and schemas.
+- System overview: `docs/SYSTEM_OVERVIEW.md`; decisions: `ARCHITECTURE_DECISIONS.md`.
+- Contracts: `docs/API_CONTRACT.md` and `schemas/` (`item_author_input_v1.json`, `item_canonical_v1.json`, `item_serve_v1.json`, `submit_*_v1.json`).
+- Security: `docs/SECURITY_POLICY.md` (policy) and `docs/SECURITY_OVERVIEW.md` (plain-language).
+- Served flow: `docs/SERVED_ITEM_SPEC.md` and `docs/SERVE_PIPELINE.md`.
+- Authoring: `docs/CONTENT_AUTHORING_SPEC.md` and `schemas/item_author_input_v1.json`.
+- Ingestion: `docs/INGESTION_PIPELINE.md`.
+- Reconciliation: `docs/RECONCILIATION_page_json.md`.
+- Workflows/components: `docs/WORKFLOWS.md`, `docs/SYSTEM_COMPONENTS.md`.
 
 ### Purpose
 - **Capture reusable development know-how** for new repos: quiet startup, external terminal usage, one-command flows, env/key management, CLI UX, docs policy, troubleshooting.
