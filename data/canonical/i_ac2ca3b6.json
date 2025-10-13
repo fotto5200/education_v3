@@ -1,0 +1,93 @@
+{
+  "id": "i_ac2ca3b6",
+  "template_id": "tpl_lorem_005",
+  "content_version": 1,
+  "type": "LOREM_TYPE",
+  "title": "Lorem Item 5",
+  "content": {
+    "html": "Filler prompt 5: \\( x \\) zizzle."
+  },
+  "media": [
+    {
+      "id": "fig1",
+      "object_key": "items/tpl_lorem_005/fig1.svg",
+      "alt": "Placeholder figure 1"
+    },
+    {
+      "id": "fig2",
+      "object_key": "items/tpl_lorem_005/fig2.svg",
+      "alt": "Placeholder figure 2"
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": {
+        "html": "Step 1: filler prompt lorem \\( x \\) ipsum?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "A-option"
+        },
+        {
+          "id": "B",
+          "text": "B-option"
+        },
+        {
+          "id": "C",
+          "text": "C-option"
+        },
+        {
+          "id": "D",
+          "text": "D-option"
+        }
+      ],
+      "hint": "n/a",
+      "explanation": {
+        "html": "Filler explanation."
+      }
+    },
+    {
+      "step_id": "s2",
+      "prompt": {
+        "html": "Step 2: filler prompt lorem \\( x \\) ipsum?"
+      },
+      "choices": [
+        {
+          "id": "A",
+          "text": "A-option"
+        },
+        {
+          "id": "B",
+          "text": "B-option"
+        },
+        {
+          "id": "C",
+          "text": "C-option"
+        },
+        {
+          "id": "D",
+          "text": "D-option"
+        }
+      ],
+      "hint": "n/a",
+      "explanation": {
+        "html": "Filler explanation."
+      }
+    }
+  ],
+  "final": {
+    "answer_text": "n/a",
+    "explanation": {
+      "html": "n/a"
+    }
+  },
+  "tags": {
+    "skill": "skill_group_3",
+    "difficulty": "E"
+  },
+  "generated_at": "2025-10-12T14:27:13Z",
+  "generator_version": "seed_v1",
+  "variant_index": 5
+}

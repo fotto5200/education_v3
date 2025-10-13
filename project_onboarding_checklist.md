@@ -205,6 +205,13 @@ run.bat <input>
 
 ---
 
+### Python execution note (Windows)
+- Always run Python from an external terminal (PowerShell/CMD), not the IDE-integrated terminal.
+- Do not execute Python inside Cursor sessions; scripts like `tools/generate_canonical_seed.py` must be run externally.
+- Keep scripts quiet and non-interactive; provide `--help` and env-driven options.
+
+---
+
 ### Frontend/backend hygiene (if applicable)
 - Ensure servers use UTF-8; test key endpoints locally.
 - Keep backend startup quiet; log only a single readiness line.
