@@ -30,6 +30,19 @@
 
 ---
 
+### Plan audit hook (restart gate)
+- On startup, before any work:
+  - Load `\\state.plan.md` and `docs/CURRENT_STATUS.md`.
+  - Print: last-updated timestamp, active next target, and 1–3 next actions from `\\state.plan.md`.
+  - If `\\state.plan.md` is missing/incomplete, STOP and output ready-to-paste fixes before proceeding.
+
+### Save Protocol reminder (session close)
+- Update `\\state.plan.md` (decisions, todos, next actions, timestamp).
+- Update `docs/CURRENT_STATUS.md` and `CHANGES_BACKLOG.md` (and `docs/SESSION_LOG.md` if major).
+- Commit via external terminal using `git_update.bat`.
+
+---
+
 ### Quick venv setup (PowerShell, non-interactive)
 ```powershell
 if (!(Test-Path venv)) { python -m venv venv }

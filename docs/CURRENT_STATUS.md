@@ -2,6 +2,8 @@
 
 Date: 2025-10-13
 
+Note: Plan persistence — `\\state.plan.md` is the single source of truth. At each session start, we print Start Gate (last updated, active next target, next actions). Session close runs the Save Protocol (plan/status/backlog/session log + external commit).
+
 ## What works now
 - Backend (FastAPI)
   - Serves local media statically at `/media` (maps to repo `media/`).

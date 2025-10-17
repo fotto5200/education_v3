@@ -24,3 +24,8 @@ Entries are lightweight; we will batch updates to docs/code at checkpoints.
   - Update logging and analytics
 
 
+- [Planned] Plan persistence snapshots
+  - Maintain `docs/PLAN_HISTORY/YYYY-MM-DD.md` snapshots at milestones
+  - Add brief entry per snapshot to `docs/SESSION_LOG.md` (if major)
+
+

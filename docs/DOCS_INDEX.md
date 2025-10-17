@@ -15,5 +15,10 @@
 - `project_onboarding_checklist.md` — Startup workflow and quick scripts.
  - `docs/CURRENT_STATUS.md` — Current local MVP status and next targets.
 
+Additional planning references:
+- `\\state.plan.md` — Authoritative living plan (start/end gates, next actions).
+- `docs/SESSION_LOG.md` — Dated planning notes for major shifts (links to commits).
+- `docs/PLAN_HISTORY/` — Milestone snapshots of the plan (dated files).
+
 Exploratory/background:
 - `Big picture stuff about creating a full education system.docx` — exploratory only; canonical decisions live in ADRs and System Overview.
