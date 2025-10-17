@@ -13,6 +13,7 @@
 - `ARCHITECTURE_DECISIONS.md` — ADRs (decision history).
 - `LaTeX_Escaping_Guide.md` — LaTeX escaping rules.
 - `project_onboarding_checklist.md` — Startup workflow and quick scripts.
+ - `docs/CURRENT_STATUS.md` — Current local MVP status and next targets.
 
 Exploratory/background:
 - `Big picture stuff about creating a full education system.docx` — exploratory only; canonical decisions live in ADRs and System Overview.

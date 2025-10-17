@@ -4,18 +4,29 @@ from typing import Any, Dict
 
 _mock_item_serve: Dict[str, Any] | None = None
 _mock_submit_result: Dict[str, Any] | None = None
+_canonical_items: list[Dict[str, Any]] | None = None
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_mocks() -> None:
-    global _mock_item_serve, _mock_submit_result
+    global _mock_item_serve, _mock_submit_result, _canonical_items
     item_path = ROOT / "mock_item_serve.json"
     result_path = ROOT / "mock_submit_result.json"
     if item_path.exists():
         _mock_item_serve = json.loads(item_path.read_text(encoding="utf-8"))
     if result_path.exists():
         _mock_submit_result = json.loads(result_path.read_text(encoding="utf-8"))
+    # Load any canonical JSON files for local MVP serve adapter
+    canonical_dir = ROOT / "data" / "canonical"
+    if canonical_dir.exists():
+        _canonical_items = []
+        for p in canonical_dir.glob("*.json"):
+            try:
+                _canonical_items.append(json.loads(p.read_text(encoding="utf-8")))
+            except Exception:
+                # Skip bad files quietly (keep startup quiet)
+                continue
 
 
 def get_mock_item_serve() -> Dict[str, Any]:
@@ -42,3 +53,9 @@ def get_mock_submit_result() -> Dict[str, Any]:
     if _mock_submit_result is None:
         return {"correct": True, "explanation": {"html": "Correct."}}
     return json.loads(json.dumps(_mock_submit_result))
+
+
+def list_canonical_items() -> list[Dict[str, Any]]:
+    """Return loaded canonical items (may be empty)."""
+    global _canonical_items
+    return list(_canonical_items or [])

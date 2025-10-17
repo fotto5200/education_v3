@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response
 import uuid
+from ..util import sign_csrf_token
 
 router = APIRouter()
 
@@ -18,4 +19,5 @@ def create_session(response: Response) -> dict:
         max_age=60 * 60 * 24 * 7,
         path="/",
     )
-    return {"session_id": session_id}
+    csrf_token = sign_csrf_token(session_id)
+    return {"session_id": session_id, "csrf_token": csrf_token}
