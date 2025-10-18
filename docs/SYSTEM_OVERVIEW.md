@@ -12,6 +12,7 @@
   - Design tokens via CSS variables; theme switch at runtime.
 - **Backend**: FastAPI (Python), httpOnly cookie sessions, CSRF for writes.
   - Endpoints: `POST /api/session`, `GET /api/item/next`, `POST /api/answer`.
+  - Selection: session-scoped rotation with no immediate repeats (recent window ~5 for MVP).
   - Randomizes `choice_order`; evaluates submissions; logs attempts.
 - **Data**: Postgres JSONB (canonical problems & serve snapshots); object storage for media (SVG/PNG) via signed URLs.
 - **Hosting**: GCP Cloud Run (containers), Cloud SQL Postgres, Cloud Storage, Cloud CDN. Alternatives optional.

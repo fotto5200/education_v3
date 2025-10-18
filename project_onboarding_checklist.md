@@ -43,6 +43,17 @@
 
 ---
 
+### Dev persistence (optional)
+- Toggle: set `DEV_PERSIST_SELECTION=1` in your external terminal session.
+- Files (auto-created, gitignored):
+  - `dev_state/selection_state.json` — per-session selection state (last_type, active_type, recent_ids, counters)
+  - `dev_state/events.ndjson` — append-only dev events: served/answered
+- Notes:
+  - Anonymous sessions are not persisted.
+  - For testing only; production will use DB-backed persistence and a policy engine.
+
+---
+
 ### Quick venv setup (PowerShell, non-interactive)
 ```powershell
 if (!(Test-Path venv)) { python -m venv venv }

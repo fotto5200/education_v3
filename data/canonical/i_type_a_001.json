@@ -1,0 +1,27 @@
+{
+  "id": "i_type_a_001",
+  "template_id": "tpl_type_a",
+  "content_version": 1,
+  "type": "TYPE_A",
+  "title": "Type A – Sample 1",
+  "content": { "html": "Compute \\(. 2 + 3 \\)." },
+  "media": [],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": { "html": "What is 2 + 3?" },
+      "choices": [
+        { "id": "A", "text": "4" },
+        { "id": "B", "text": "5" },
+        { "id": "C", "text": "6" },
+        { "id": "D", "text": "7" }
+      ]
+    }
+  ],
+  "final": { "answer_text": "5", "explanation": { "html": "2 + 3 = 5." } },
+  "tags": { "skill": "skill_a", "difficulty": "E" },
+  "generated_at": "2025-10-17T00:00:00Z",
+  "generator_version": "mock-1"
+}
+
+

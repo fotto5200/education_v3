@@ -2,7 +2,7 @@
 
 - Authoring → Ingestion → Canonical: Author emits item JSON → ingestion validates/enriches → saves canonical item (Postgres) + media keys.
 - Session Start (Login/Resume): User signs up/logs in → server sets httpOnly session cookie → client loads profile/preferences.
-- Select Next Item: Selection engine filters by skill/difficulty/playlists → avoids near-duplicates → returns canonical item id.
+- Select Next Item: MVP selects by `item.type` (same as last served per session by default; optional `type` query override). Future: policy engine may apply playlists/skill/difficulty and avoids near-duplicates → returns canonical item id.
 - Serve Snapshot: Backend derives safe payload (prompt, choices, signed media, randomized order, watermark) → FE renders.
 - Per‑step Submit and Feedback: Client posts choice (with CSRF) → server grades from canonical → returns correctness + explanation/next step.
 - Media Fetch: FE requests signed URL assets → CDN serves SVG/PNG → alt/long_alt used for accessibility.
@@ -23,10 +23,10 @@
   - Read: session cookie → look up `user_id`, prior serves/attempts, teacher playlist (if any), last difficulty per skill.
 
 - 2) Selection (choose next item)
-  - Read candidates from canonical store (Postgres JSONB) filtered by skill/difficulty/playlists/status.
-  - Exclude near-duplicates/recents; apply teacher playlist ordering if present.
-  - Score by rules (difficulty shift, spiral review cadence).
-  - Pick an `item.id` (variant) → return {item.id, template_id, skill, difficulty}.
+- MVP: determine `target_type` (query `type` if provided; else last served type for the session; else default type from available items). Dev/testing: if `policy=simple`, rotate to the next available `type` after N serves.
+  - Read candidates from canonical store filtered by `type == target_type`.
+  - Exclude near-duplicates/recents (session recent window).
+  - Future: apply playlists/skill/difficulty/policy engine to score and pick.
 
 - 3) Fetch canonical
   - Read canonical JSON by `item.id` (verify `content_version/status`).

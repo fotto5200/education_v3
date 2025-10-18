@@ -29,6 +29,18 @@ See also: `LaTeX_Escaping_Guide.md` for escaping rules.
 
 Schema: `schemas/item_serve_v1.json`
 
+#### Query parameters (MVP)
+- `type` (optional): when provided, the server scopes selection to items whose `item.type` matches the given value (case-insensitive). Without this parameter, selection defaults to the same type as the last item served in the session.
+- `policy` (optional, dev/testing): when set to `simple`, the server rotates to the next available `item.type` after N serves (default N=3, configurable via env `POLICY_N`). Ignored if `type` is provided.
+
+Examples:
+- `GET /api/item/next` → next item of the same type as last served (session-scoped)
+- `GET /api/item/next?type=PARALLEL_LINE_FIND_X` → next item of that type
+
+Notes:
+- `skill` is NOT used for next-item selection in the MVP; it is reserved for future remedial focus flows.
+- `policy=simple` is for development/testing only; production policy selection will be governed by a server-side policy engine.
+
 ### Submit step (POST /api/answer)
 Request:
 ```json

@@ -11,3 +11,5 @@ build/
 *.tmp
 coverage/
 .cache/
+# Local dev state
+/dev_state/
