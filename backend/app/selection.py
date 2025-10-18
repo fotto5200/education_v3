@@ -5,6 +5,7 @@ from typing import Any, Deque, Dict, List, Optional
 import os
 import random
 from . import selection_repo
+from .policy_engine import choose_next_type
 
 
 class _SessionState:
@@ -47,6 +48,7 @@ class SelectionManager:
     - Maintains a per-session recent window of served item ids (default 5).
     - Optionally scopes selection by item.type (override via query param or last served type).
     - Optional simple policy: rotate to next type after N serves.
+    - Optional policy engine stub: when enabled, recommends next type; defaults to same-type.
     - Optional dev persistence: load/save state to a local JSON file when enabled.
     - Rebuilds queue when the active type changes or the queue empties.
     - If exclusion yields no candidates (e.g., too few items), clears recent and rebuilds.
@@ -124,12 +126,26 @@ class SelectionManager:
 
         policy_name, policy_n = self._get_policy(policy)
 
+        # Policy engine can recommend a type (dev/test). Takes precedence over last_type, but not over explicit override.
+        engine_enabled = policy_name == "engine"
+        engine_reco: Optional[str] = None
+        if engine_enabled:
+            available_types = [c.get("type", "") for c in canonicals]
+            engine_reco = choose_next_type(
+                available_types=available_types,
+                last_type=state.last_type,
+                serves_in_current_type=state.serves_in_current_type,
+            )
+
         # Determine desired type precedence:
         # 1) explicit override via query
-        # 2) when policy is active, use any preselected active_type (next type)
-        # 3) fall back to last_type
+        # 2) policy engine recommendation (if any)
+        # 3) when simple policy is active, use any preselected active_type (next type)
+        # 4) fall back to last_type
         if target_type is not None:
             desired_type_norm = self._normalize(target_type)
+        elif engine_reco:
+            desired_type_norm = self._normalize(engine_reco)
         elif policy_name == "simple" and state.active_type:
             desired_type_norm = state.active_type
         else:

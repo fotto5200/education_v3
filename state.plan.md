@@ -41,7 +41,8 @@
 
 - Delivery Engine (Backend)
   - FastAPI endpoints: `POST /api/session`, `GET /api/item/next`, `POST /api/answer`; selection; grading; rate limits.
-  - Selection: session‑scoped rotation with no immediate repeats; type‑aware by last served type (optional `?type` override); dev/testing `policy=simple` rotates to the next available type after N serves (`POLICY_N`, default 3).
+  - Selection: session‑scoped rotation with no immediate repeats; type‑aware by last served type (optional `?type` override).
+  - Dev policies: `policy=simple` rotation after N serves; `policy=engine` consults a stub (same‑type by default; respects `ENGINE_STRICT=1` + `POLICY_N`).
   - Dev persistence & logs: when `DEV_PERSIST_SELECTION=1`, selection state is saved to `dev_state/selection_state.json` and events are appended to `dev_state/events.ndjson` (gitignored).
   - Key: `backend/app/main.py`, `backend/app/routes/*.py`, `backend/app/util.py`, `backend/app/store.py`, `docs/WORKFLOWS.md`.
 
@@ -149,8 +150,9 @@
 - [x] Type-aware selection by last served type with optional `?type` override
 - [x] Simple policy-driven type rotation (dev/testing; `policy=simple`, N via `POLICY_N`)
 - [x] Dev-only persistence of selection state and append-only dev events (`DEV_PERSIST_SELECTION=1`)
+- [x] Policy engine stub (`policy=engine`), default same-type; respects `ENGINE_STRICT=1` + `POLICY_N`
 - [x] Manual curl/FE tests; update CURRENT_STATUS usage notes
 
 ### Active Next Target
 
-- Define server-side policy engine interface (no-op stub) that accepts a session/performance summary and returns desired next `item.type`; default continues same-type until a real policy is enabled
+- Server-side grading: check answers against canonical and return correctness/explanation (replace mock)

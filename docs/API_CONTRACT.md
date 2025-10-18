@@ -31,7 +31,10 @@ Schema: `schemas/item_serve_v1.json`
 
 #### Query parameters (MVP)
 - `type` (optional): when provided, the server scopes selection to items whose `item.type` matches the given value (case-insensitive). Without this parameter, selection defaults to the same type as the last item served in the session.
-- `policy` (optional, dev/testing): when set to `simple`, the server rotates to the next available `item.type` after N serves (default N=3, configurable via env `POLICY_N`). Ignored if `type` is provided.
+- `policy` (optional, dev/testing):
+  - `simple`: rotate to the next available `item.type` after N serves (default N=3, env `POLICY_N`).
+  - `engine`: consults a dev policy engine stub that recommends the next `item.type`. By default it continues same‑type; if env `ENGINE_STRICT=1`, it rotates after N serves (env `POLICY_N`, default 3).
+  - Ignored if `type` is provided.
 
 Examples:
 - `GET /api/item/next` → next item of the same type as last served (session-scoped)
@@ -39,7 +42,7 @@ Examples:
 
 Notes:
 - `skill` is NOT used for next-item selection in the MVP; it is reserved for future remedial focus flows.
-- `policy=simple` is for development/testing only; production policy selection will be governed by a server-side policy engine.
+- `policy=simple|engine` are development/testing only; production policy selection will be governed by a server-side policy engine.
 
 ### Submit step (POST /api/answer)
 Request:

@@ -11,7 +11,7 @@
 ### Steps
 1) Selection picks the next canonical item for a session.
    - MVP: default to the same `item.type` as the last item served in the session; optional `type` query overrides this.
-   - Dev/testing: `policy=simple` rotates to the next available `item.type` after N serves (default 3, `POLICY_N`).
+   - Dev/testing: `policy=simple` rotates to the next available `item.type` after N serves (default 3, `POLICY_N`). `policy=engine` consults a dev policy stub; by default continues same‑type; with `ENGINE_STRICT=1` rotates after N serves.
    - Future: policy engine may choose type transitions based on user performance/roadmap.
 2) Construct serve snapshot:
    - Copy safe fields: `item { id, type, title?, content.html }`.

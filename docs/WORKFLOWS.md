@@ -23,7 +23,7 @@
   - Read: session cookie → look up `user_id`, prior serves/attempts, teacher playlist (if any), last difficulty per skill.
 
 - 2) Selection (choose next item)
-- MVP: determine `target_type` (query `type` if provided; else last served type for the session; else default type from available items). Dev/testing: if `policy=simple`, rotate to the next available `type` after N serves.
+- MVP: determine `target_type` (query `type` if provided; else last served type for the session; else default type from available items). Dev/testing: if `policy=simple`, rotate to the next available `type` after N serves; if `policy=engine`, ask the dev policy stub (same‑type by default; rotate after N when `ENGINE_STRICT=1`).
   - Read candidates from canonical store filtered by `type == target_type`.
   - Exclude near-duplicates/recents (session recent window).
   - Future: apply playlists/skill/difficulty/policy engine to score and pick.
