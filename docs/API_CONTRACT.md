@@ -57,7 +57,39 @@ Response:
 
 Schemas: `schemas/submit_step_v1.json`, `schemas/submit_result_v1.json`
 
+#### Semantics (MVP grading)
+- The server evaluates correctness by comparing the submitted choice’s text to the canonical `final.answer_text` for the item (exact text match; step‑agnostic for MVP samples).
+- When present, `final.explanation.html` is returned as `explanation.html` for display by the client.
+- Legacy/local lorem items may omit explanations and may not align choice text with final answers; those can grade False and/or return `explanation` absent. Use the newer TYPE_A/B/C samples for end‑to‑end grading tests.
+
 ### Notes
 - Never include correctness flags in the serve snapshot.
 - All LaTeX in JSON must use escaped delimiters (e.g., `\\( ... \\)`).
 - The client must pass credentials (cookies) and CSRF token on writes.
+
+### Progress summary (GET /api/progress)
+Response (example):
+```json
+{
+  "session_id": "s_123",
+  "by_type": {
+    "TYPE_A": { "attempts": 3, "correct": 2, "accuracy": 0.6667 },
+    "TYPE_B": { "attempts": 1, "correct": 0, "accuracy": 0.0 }
+  },
+  "overall": { "attempts": 4, "correct": 2, "accuracy": 0.5 }
+}
+```
+
+Notes:
+- Dev-only data source: when `DEV_PERSIST_SELECTION=1`, the server aggregates from `dev_state/events.ndjson` (answered events). Without it, all zeros.
+- Scope: current session only; no user identity assumptions.
+
+### Events export (GET /api/events.csv)
+Response: CSV stream with header
+```
+ts,session_id,item_id,item_type,action,correct
+```
+
+Notes:
+- Dev-only: requires `DEV_PERSIST_SELECTION=1`. Exports only events for the current session (cookie).
+- Fields: `ts` (ISO 8601), `session_id`, `item_id`, `item_type` (if present), `action` (served|answered), `correct` (true|false or empty).

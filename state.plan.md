@@ -151,8 +151,11 @@
 - [x] Simple policy-driven type rotation (dev/testing; `policy=simple`, N via `POLICY_N`)
 - [x] Dev-only persistence of selection state and append-only dev events (`DEV_PERSIST_SELECTION=1`)
 - [x] Policy engine stub (`policy=engine`), default same-type; respects `ENGINE_STRICT=1` + `POLICY_N`
-- [x] Manual curl/FE tests; update CURRENT_STATUS usage notes
+- [x] Server-side grading (MVP)
+- [x] Minimal FE feedback banner and explanation heading
+- [x] Progress API (`GET /api/progress`) and FE progress panel
+- [x] Events CSV export (`GET /api/events.csv`) and FE label/cooldown tidy
 
 ### Active Next Target
 
-- Server-side grading: check answers against canonical and return correctness/explanation (replace mock)
+- DB persistence prep: introduce a DB-backed repo for selection state and attempts (behind existing interfaces), env-gated; update docs and a small test

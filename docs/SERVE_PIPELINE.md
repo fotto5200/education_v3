@@ -21,6 +21,11 @@
 3) Client submits: `{ session_id, item_id, step_id?, choice_id? }`.
 4) Grade on server using canonical; respond `{ correct, explanation { html }?, next_step? }`.
 
+#### Grading (MVP)
+- Minimal evaluator compares submitted choice text to canonical `final.answer_text` (string equality).
+- If `final.explanation.html` exists, it is returned in the `explanation` field for client rendering.
+- Older lorem items may lack aligned choices or explanations; use new TYPE_A/B/C samples for grading tests.
+
 ### Rules
 - Never send correctness flags or final keys in serve snapshot.
 - Randomize choice order per serve; log seed/ordering.
@@ -34,3 +39,11 @@
 - When `DEV_PERSIST_SELECTION=1`, the server persists selection state to `dev_state/selection_state.json` and appends simple events to `dev_state/events.ndjson`.
 - Fields (selection state per session): `last_type`, `active_type`, `recent_ids[]`, `serves_in_current_type` (window=5).
 - Events (NDJSON): `{ ts, session_id, item_id, item_type?, action: served|answered, correct? }`.
+
+### Progress (dev-only)
+- Endpoint: `GET /api/progress` returns per-session attempts/correct/accuracy by item.type and an overall rollup.
+- Source: aggregates from dev events (`answered`); if persistence is off, returns zeros.
+
+### Events export (dev-only)
+- Endpoint: `GET /api/events.csv` streams CSV for the current session using dev events.
+- Columns: `ts,session_id,item_id,item_type,action,correct`.

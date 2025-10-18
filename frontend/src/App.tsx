@@ -19,6 +19,12 @@ type ServePayload = {
   serve: { seed: string; choice_order?: string[]; watermark: string }
 }
 
+type Progress = {
+  session_id: string | null
+  by_type: Record<string, { attempts: number; correct: number; accuracy: number }>
+  overall: { attempts: number; correct: number; accuracy: number }
+}
+
 function MathText({ html }: { html: string }) {
   const __html = useMemo(() => {
     // Render inline math; keep plain HTML otherwise
@@ -32,11 +38,13 @@ export default function App() {
   const [data, setData] = useState<ServePayload | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [result, setResult] = useState<string | null>(null)
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [csrf, setCsrf] = useState<string | null>(null)
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
   const [cooldownMs, setCooldownMs] = useState<number>(0)
   const [cooldownTimer, setCooldownTimer] = useState<number | null>(null)
   const [explanationHtml, setExplanationHtml] = useState<string | null>(null)
+  const [progress, setProgress] = useState<Progress | null>(null)
 
   useEffect(() => {
     // Ensure session and obtain CSRF token
@@ -50,6 +58,17 @@ export default function App() {
       .then(r => r.json())
       .then(setData)
       .catch(err => console.error(err))
+
+    // Fetch progress
+    const fetchProgress = () => {
+      fetch('http://localhost:8000/api/progress', { credentials: 'include' })
+        .then(r => r.json())
+        .then(setProgress)
+        .catch(() => {})
+    }
+    fetchProgress()
+    const id = window.setInterval(fetchProgress, 2000)
+    return () => window.clearInterval(id)
   }, [])
 
   const orderedChoices: Choice[] = useMemo(() => {
@@ -100,6 +119,7 @@ export default function App() {
       return
     }
     const json = await res.json()
+    setIsCorrect(Boolean(json.correct))
     setResult(json.correct ? 'Correct' : 'Incorrect')
     setExplanationHtml(json.explanation?.html ?? null)
     if (json.next_step && data.item.steps && data.item.steps.length > 0) {
@@ -137,16 +157,38 @@ export default function App() {
           </label>
         ))}
       </section>
-      <button onClick={onSubmit} disabled={cooldownMs > 0} className="px-3 py-2 rounded bg-gray-800 text-white disabled:opacity-50">Check</button>
+      <button onClick={onSubmit} disabled={!selected || cooldownMs > 0} className="px-3 py-2 rounded bg-gray-800 text-white disabled:opacity-50">Check answer</button>
       {cooldownMs > 0 && (
         <div className="text-xs text-red-600">Too many requests. Try again in {Math.ceil(cooldownMs/1000)}s.</div>
       )}
+      {isCorrect !== null && (
+        <div className={`text-sm border rounded px-3 py-2 ${isCorrect ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}`}>
+          {isCorrect ? 'Correct' : 'Incorrect'}
+        </div>
+      )}
       {explanationHtml && (
-        <section className="mt-2 p-2 border rounded">
+        <section className="mt-2 p-3 border rounded">
+          <div className="font-medium mb-1">Explanation</div>
           <MathText html={explanationHtml} />
         </section>
       )}
-      {result && <div className="text-sm">{result}</div>}
+      {progress && (
+        <aside className="mt-4 p-3 border rounded text-sm">
+          <div className="font-medium mb-1">Progress (this session)</div>
+          <div className="space-y-1">
+            {Object.entries(progress.by_type).map(([type, s]) => (
+              <div key={type} className="flex items-center justify-between">
+                <span className="opacity-80">{type}</span>
+                <span>{s.correct}/{s.attempts} ({Math.round(s.accuracy * 100)}%)</span>
+              </div>
+            ))}
+            <div className="flex items-center justify-between border-t pt-1 mt-1">
+              <span className="opacity-80">Overall</span>
+              <span>{progress.overall.correct}/{progress.overall.attempts} ({Math.round(progress.overall.accuracy * 100)}%)</span>
+            </div>
+          </div>
+        </aside>
+      )}
       <footer className="text-xs opacity-70">{data.serve.watermark}</footer>
     </div>
   )

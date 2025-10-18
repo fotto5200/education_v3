@@ -5,12 +5,13 @@ from typing import Any, Dict
 _mock_item_serve: Dict[str, Any] | None = None
 _mock_submit_result: Dict[str, Any] | None = None
 _canonical_items: list[Dict[str, Any]] | None = None
+_canonical_by_id: Dict[str, Dict[str, Any]] | None = None
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_mocks() -> None:
-    global _mock_item_serve, _mock_submit_result, _canonical_items
+    global _mock_item_serve, _mock_submit_result, _canonical_items, _canonical_by_id
     item_path = ROOT / "mock_item_serve.json"
     result_path = ROOT / "mock_submit_result.json"
     if item_path.exists():
@@ -19,11 +20,16 @@ def load_mocks() -> None:
         _mock_submit_result = json.loads(result_path.read_text(encoding="utf-8"))
     # Load any canonical JSON files for local MVP serve adapter
     canonical_dir = ROOT / "data" / "canonical"
+    _canonical_items = []
+    _canonical_by_id = {}
     if canonical_dir.exists():
-        _canonical_items = []
         for p in canonical_dir.glob("*.json"):
             try:
-                _canonical_items.append(json.loads(p.read_text(encoding="utf-8")))
+                obj = json.loads(p.read_text(encoding="utf-8"))
+                _canonical_items.append(obj)
+                cid = obj.get("id")
+                if isinstance(cid, str) and cid:
+                    _canonical_by_id[cid] = obj
             except Exception:
                 # Skip bad files quietly (keep startup quiet)
                 continue
@@ -59,3 +65,10 @@ def list_canonical_items() -> list[Dict[str, Any]]:
     """Return loaded canonical items (may be empty)."""
     global _canonical_items
     return list(_canonical_items or [])
+
+
+def get_canonical_by_id(item_id: str) -> Dict[str, Any] | None:
+    global _canonical_by_id
+    if not _canonical_by_id:
+        return None
+    return _canonical_by_id.get(item_id)
