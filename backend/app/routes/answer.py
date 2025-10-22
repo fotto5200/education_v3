@@ -30,7 +30,9 @@ def submit_step(
     if not canonical:
         # Fallback to mock result if item not found (dev)
         result = get_mock_submit_result()
+        canonical_type = None
     else:
+        canonical_type = canonical.get("type")
         # Minimal grading: match selected choice text against final.answer_text (trimmed, case-sensitive for now)
         final_answer = ((canonical.get("final") or {}).get("answer_text") or "").strip()
         explanation_html = ((canonical.get("final") or {}).get("explanation") or {}).get("html")
@@ -61,7 +63,7 @@ def submit_step(
         selection_repo.append_event({
             "session_id": session_id,
             "item_id": body.item_id,
-            "item_type": None,
+            "item_type": canonical_type,
             "action": "answered",
             "correct": bool(result.get("correct")),
         })

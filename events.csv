@@ -1,3 +1,7 @@
 ts,session_id,item_id,item_type,action,correct
-2025-10-18T03:07:00.128663+00:00,s_3bed9c58,i_type_a_002,TYPE_A,served,
-2025-10-18T03:07:00.278873+00:00,s_3bed9c58,i_type_a_002,,answered,true
+2025-10-22T17:28:41.520214+00:00,s_1ee6e0e7,i_type_a_002,TYPE_A,served,
+2025-10-22T17:28:41.578767+00:00,s_1ee6e0e7,i_type_a_002,,answered,true
+2025-10-22T17:28:41.595183+00:00,s_1ee6e0e7,i_type_a_001,TYPE_A,served,
+2025-10-22T17:28:41.603421+00:00,s_1ee6e0e7,i_type_a_001,,answered,true
+2025-10-22T17:28:41.617153+00:00,s_1ee6e0e7,i_type_a_002,TYPE_A,served,
+2025-10-22T17:28:41.624751+00:00,s_1ee6e0e7,i_type_a_002,,answered,true

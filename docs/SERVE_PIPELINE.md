@@ -37,12 +37,13 @@
 
 ### Dev-only persistence & logs
 - When `DEV_PERSIST_SELECTION=1`, the server persists selection state to `dev_state/selection_state.json` and appends simple events to `dev_state/events.ndjson`.
+- When `DB_PERSIST_SELECTION=1`, the server uses SQLite at `dev_state/app.db` via an env‑gated repo.
 - Fields (selection state per session): `last_type`, `active_type`, `recent_ids[]`, `serves_in_current_type` (window=5).
 - Events (NDJSON): `{ ts, session_id, item_id, item_type?, action: served|answered, correct? }`.
 
 ### Progress (dev-only)
 - Endpoint: `GET /api/progress` returns per-session attempts/correct/accuracy by item.type and an overall rollup.
-- Source: aggregates from dev events (`answered`); if persistence is off, returns zeros.
+- Source: aggregates from dev events (`answered`) via the active persistence repo; if persistence is off, returns zeros.
 
 ### Events export (dev-only)
 - Endpoint: `GET /api/events.csv` streams CSV for the current session using dev events.

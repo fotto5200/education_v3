@@ -81,7 +81,7 @@ Response (example):
 ```
 
 Notes:
-- Dev-only data source: when `DEV_PERSIST_SELECTION=1`, the server aggregates from `dev_state/events.ndjson` (answered events). Without it, all zeros.
+- Dev-only data source: when `DEV_PERSIST_SELECTION=1`, the server aggregates from `dev_state/events.ndjson` (answered events). With `DB_PERSIST_SELECTION=1`, aggregates from SQLite at `dev_state/app.db`. Without persistence enabled, returns zeros.
 - Scope: current session only; no user identity assumptions.
 
 ### Events export (GET /api/events.csv)
@@ -93,3 +93,17 @@ ts,session_id,item_id,item_type,action,correct
 Notes:
 - Dev-only: requires `DEV_PERSIST_SELECTION=1`. Exports only events for the current session (cookie).
 - Fields: `ts` (ISO 8601), `session_id`, `item_id`, `item_type` (if present), `action` (served|answered), `correct` (true|false or empty).
+- Header-only is returned when no events exist for the current session.
+
+Usage examples:
+```powershell
+# With WebRequestSession (recommended)
+$ws = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$sess = Invoke-RestMethod -Uri "http://localhost:8000/api/session" -Method Post -WebSession $ws
+Invoke-WebRequest -Uri "http://localhost:8000/api/events.csv" -WebSession $ws -OutFile events.csv
+```
+```bash
+# With cookie jar (curl)
+curl -c jar.txt -X POST http://localhost:8000/api/session
+curl -b jar.txt http://localhost:8000/api/events.csv -o events.csv
+```

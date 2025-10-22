@@ -52,6 +52,12 @@
   - Anonymous sessions are not persisted.
   - For testing only; production will use DB-backed persistence and a policy engine.
 
+### Dev scripts
+- Backend (file mode): `tools\run_backend_file_mode.bat`
+- Backend (DB mode): `tools\run_backend_db_mode.bat`
+- Frontend: `tools\run_frontend.bat`
+- API test: `tools\test_db_mode.ps1 -Type TYPE_A -Attempts 5`
+
 ---
 
 ### Quick venv setup (PowerShell, non-interactive)
