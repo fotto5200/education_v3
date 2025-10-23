@@ -15,7 +15,8 @@
         { "id": "B", "text": "5" },
         { "id": "C", "text": "6" },
         { "id": "D", "text": "7" }
-      ]
+      ],
+      "correct_choice_id": "B"
     }
   ],
   "final": { "answer_text": "5", "explanation": { "html": "10 - 5 = 5." } },

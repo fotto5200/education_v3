@@ -24,7 +24,7 @@ def submit_step(
 ) -> dict:
     session_id = request.cookies.get("ev3_session")
     if not session_id or not x_csrf_token or not verify_csrf_token(x_csrf_token, session_id):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="CSRF required")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="csrf_required")
 
     canonical = get_canonical_by_id(body.item_id or "")
     if not canonical:
@@ -33,28 +33,53 @@ def submit_step(
         canonical_type = None
     else:
         canonical_type = canonical.get("type")
-        # Minimal grading: match selected choice text against final.answer_text (trimmed, case-sensitive for now)
+        # Step-aware grading (dev): prefer steps[].correct_choice_id when present for the targeted step.
+        # Fallback: compare submitted choice text against final.answer_text.
         final_answer = ((canonical.get("final") or {}).get("answer_text") or "").strip()
         explanation_html = ((canonical.get("final") or {}).get("explanation") or {}).get("html")
-        # Find submitted choice text from either top-level choices or step choices
-        submitted_text = None
+
         steps = canonical.get("steps") or []
+        correct: bool | None = None
+
         if steps:
-            for step in steps:
-                for ch in (step.get("choices") or []):
+            # Determine target step (default to first if unspecified or missing)
+            target_step = None
+            if body.step_id:
+                for s in steps:
+                    if s.get("step_id") == body.step_id:
+                        target_step = s
+                        break
+            if target_step is None:
+                target_step = steps[0]
+
+            correct_choice_id = target_step.get("correct_choice_id")
+            if isinstance(correct_choice_id, str) and correct_choice_id:
+                # Grade by id when available
+                correct = (body.choice_id == correct_choice_id)
+            else:
+                # Fallback by text match within the step's choices
+                submitted_text = None
+                for ch in (target_step.get("choices") or []):
                     if ch.get("id") == body.choice_id:
                         submitted_text = (ch.get("text") or "").strip()
                         break
-                if submitted_text is not None:
-                    break
-        # If no steps model, try top-level choices structure (not typical for canonical)
-        if submitted_text is None and isinstance(canonical.get("choices"), list):
-            for ch in canonical.get("choices"):
-                if ch.get("id") == body.choice_id:
-                    submitted_text = (ch.get("text") or "").strip()
-                    break
-        correct = bool(submitted_text) and (submitted_text == final_answer)
-        result = {"correct": correct}
+                if submitted_text is not None and final_answer:
+                    correct = (submitted_text == final_answer)
+
+        if correct is None:
+            # No steps model or could not resolve step: try top-level choices (legacy) then final.answer_text
+            submitted_text = None
+            if isinstance(canonical.get("choices"), list):
+                for ch in canonical.get("choices"):
+                    if ch.get("id") == body.choice_id:
+                        submitted_text = (ch.get("text") or "").strip()
+                        break
+            if submitted_text is not None and final_answer:
+                correct = (submitted_text == final_answer)
+            else:
+                correct = False
+
+        result = {"correct": bool(correct)}
         if explanation_html:
             result["explanation"] = {"html": explanation_html}
 

@@ -119,6 +119,12 @@ export default function App() {
       return
     }
     const json = await res.json()
+    if (res.status === 403 && json?.code === 'csrf_required') {
+      setResult('Security check failed. Refresh the page to get a new session and try again.')
+      setIsCorrect(null)
+      setExplanationHtml(null)
+      return
+    }
     setIsCorrect(Boolean(json.correct))
     setResult(json.correct ? 'Correct' : 'Incorrect')
     setExplanationHtml(json.explanation?.html ?? null)

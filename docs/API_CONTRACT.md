@@ -57,15 +57,35 @@ Response:
 
 Schemas: `schemas/submit_step_v1.json`, `schemas/submit_result_v1.json`
 
-#### Semantics (MVP grading)
-- The server evaluates correctness by comparing the submitted choice’s text to the canonical `final.answer_text` for the item (exact text match; step‑agnostic for MVP samples).
-- When present, `final.explanation.html` is returned as `explanation.html` for display by the client.
-- Legacy/local lorem items may omit explanations and may not align choice text with final answers; those can grade False and/or return `explanation` absent. Use the newer TYPE_A/B/C samples for end‑to‑end grading tests.
+#### Semantics (step‑aware grading)
+- If the canonical item has `steps[]` and the targeted step (by `step_id`, or the first step if omitted) includes `correct_choice_id`, the server grades by ID: `correct := (choice_id == correct_choice_id)`.
+- Otherwise, the server falls back to comparing the submitted choice’s text to the canonical `final.answer_text` (exact string match; trimmed; case‑sensitive currently).
+- When present, `final.explanation.html` is returned as `explanation.html`.
+- For legacy/local lorem items where data may be incomplete, fallback behavior applies; use TYPE_A/B/C samples for predictable tests.
 
 ### Notes
 - Never include correctness flags in the serve snapshot.
 - All LaTeX in JSON must use escaped delimiters (e.g., `\\( ... \\)`).
 - The client must pass credentials (cookies) and CSRF token on writes.
+
+### Error responses (stable JSON shape)
+- All 4xx/5xx errors return JSON: `{ "code": string, "message": string }`.
+- Common codes:
+  - `csrf_required` (403)
+  - `rate_limited` (429) — includes standard rate‑limit headers
+  - `bad_request`, `not_found`, `server_error`
+
+Example 429 body:
+```json
+{ "code": "rate_limited", "message": "Too many requests" }
+```
+
+### Health and readiness
+- `GET /api/health` → `{ "status": "ok" }` (200) when process is up.
+- `GET /api/readiness` → dev‑friendly 200 with diagnostics, e.g.:
+```json
+{ "status": "ready", "limiter_ok": true, "persistence": { "file": true, "db": false } }
+```
 
 ### Progress summary (GET /api/progress)
 Response (example):

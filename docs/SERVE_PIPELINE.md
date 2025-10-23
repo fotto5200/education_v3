@@ -21,10 +21,11 @@
 3) Client submits: `{ session_id, item_id, step_id?, choice_id? }`.
 4) Grade on server using canonical; respond `{ correct, explanation { html }?, next_step? }`.
 
-#### Grading (MVP)
-- Minimal evaluator compares submitted choice text to canonical `final.answer_text` (string equality).
-- If `final.explanation.html` exists, it is returned in the `explanation` field for client rendering.
-- Older lorem items may lack aligned choices or explanations; use new TYPE_A/B/C samples for grading tests.
+#### Grading (step‑aware)
+- If the canonical item has `steps[]` and the targeted step contains `correct_choice_id`, grade by ID equality: `choice_id == correct_choice_id`.
+- Otherwise, fall back to comparing the submitted choice’s text to canonical `final.answer_text` (string equality, trimmed, case‑sensitive for now).
+- When present, `final.explanation.html` is returned as `explanation.html`.
+- Legacy lorem data may be incomplete; use TYPE_A/B/C samples for predictable grading.
 
 ### Rules
 - Never send correctness flags or final keys in serve snapshot.
