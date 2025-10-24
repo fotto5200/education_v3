@@ -16,8 +16,8 @@
 2) Construct serve snapshot:
    - Copy safe fields: `item { id, type, title?, content.html }`.
    - Transform media: `object_key` → `signed_url` + `ttl_s`, include `alt` (and optionally expose `long_alt`).
-   - Steps: include `steps[] { step_id, prompt.html, choices[] { id,text } }` without correctness; set per-step `serve.choice_order`.
-   - Runtime: set `session_id`, `serve.seed`, `serve.watermark`.
+   - Steps: include `steps[] { step_id, prompt.html, choices[] { id,text, media[] } }` without correctness; set per-step `serve.choice_order`.
+   - Runtime: set `session_id`, `serve.id`, `serve.seed`, `serve.watermark`.
 3) Client submits: `{ session_id, item_id, step_id?, choice_id? }`.
 4) Grade on server using canonical; respond `{ correct, explanation { html }?, next_step? }`.
 
@@ -48,4 +48,4 @@
 
 ### Events export (dev-only)
 - Endpoint: `GET /api/events.csv` streams CSV for the current session using dev events.
-- Columns: `ts,session_id,item_id,item_type,action,correct`.
+- Columns: `ts,session_id,serve_id,attempt_id,item_id,item_type,action,correct`.

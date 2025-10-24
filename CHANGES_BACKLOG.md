@@ -2,7 +2,7 @@
 
 Entries are lightweight; we will batch updates to docs/code at checkpoints.
 
-- [Planned] Choice-level media support
+- [Done] Choice-level media support
   - Extend `choices[]` to allow `{ media[] }` similar to item-level media
   - Serve pipeline to include choice media with signed URLs
   - FE to render choice buttons with text and/or images
@@ -11,7 +11,7 @@ Entries are lightweight; we will batch updates to docs/code at checkpoints.
   - Add rendering of `item.media[]` in `frontend/src/App.tsx`
   - Preserve alt/long_alt semantics for accessibility
 
-- [Planned] CSP policy: env-driven allowlist for media origins
+- [Done] CSP policy: env-driven allowlist for media origins
   - Dev: local static (`self`, `http://localhost:*`)
   - Prod: explicit CDN origin in `img-src`
 
@@ -19,9 +19,8 @@ Entries are lightweight; we will batch updates to docs/code at checkpoints.
   - Canonical already allows `long_alt`
   - Consider exposing via serve snapshot and UI affordance
 
-- [Later] IDs in serve/submit flows
-  - Add `serve_id` and `attempt_id` to serve & submit schemas
-  - Update logging and analytics
+- [Done] IDs in serve/submit flows (dev)
+  - Added `serve_id` and `attempt_id` to serve & submit; updated logs and events export
 
 
 - [Planned] Plan persistence snapshots

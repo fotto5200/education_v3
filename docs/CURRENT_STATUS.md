@@ -1,10 +1,15 @@
 **Last updated**: 2025-10-23
 
-**Active next target**: Sprint 02 — Step‑aware grading and health endpoints
+**Active next target**: Sprint 03 — Choice‑level media and CSP (complete)
+
+**Completed**
+- Step‑aware grading, health/readiness endpoints, and stable error JSON (Sprint 02)
+- Choice‑level media end‑to‑end and CSP header (Sprint 03)
+- Stretch: `serve_id` and `attempt_id` in payloads and logs
 
 **Next actions (1–3)**
-1) Verify step‑aware grading using `steps[].correct_choice_id` on sample items.
-2) Hit `/api/health` and `/api/readiness` to confirm local readiness.
-3) Exercise 403/429 flows and confirm FE banners and JSON error shape.
+1) Decide Sprint 04 scope (playlists/selection or basic auth/onboarding).
+2) Optional: expose `long_alt` affordance in FE.
+3) Optional: add unit tests for serve/grading and events export.
 
 

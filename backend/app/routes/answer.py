@@ -4,6 +4,7 @@ from ..store import get_mock_submit_result, get_canonical_by_id
 from ..util import verify_csrf_token
 from ..util import get_rate_limiter
 from .. import selection_repo
+import uuid
 
 router = APIRouter()
 limiter = get_rate_limiter()
@@ -13,6 +14,7 @@ class SubmitStep(BaseModel):
     item_id: str
     step_id: str | None = None
     choice_id: str | None = None
+    serve_id: str | None = None
 
 @router.post("/answer")
 @limiter.limit("30/minute")
@@ -85,11 +87,15 @@ def submit_step(
 
     # Dev-only event log
     if selection_repo.is_enabled() and session_id:
+        attempt_id = f"attempt_{uuid.uuid4().hex[:8]}"
         selection_repo.append_event({
             "session_id": session_id,
+            "serve_id": body.serve_id,
+            "attempt_id": attempt_id,
             "item_id": body.item_id,
             "item_type": canonical_type,
             "action": "answered",
             "correct": bool(result.get("correct")),
         })
+        result["attempt_id"] = attempt_id
     return result

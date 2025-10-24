@@ -14,6 +14,7 @@
 - `LaTeX_Escaping_Guide.md` — LaTeX escaping rules.
 - `project_onboarding_checklist.md` — Startup workflow and quick scripts.
  - `docs/CURRENT_STATUS.md` — Current local MVP status and next targets.
+ - `docs/SPRINT_03_CHOICE_MEDIA_CSP.md` — Sprint 03 scope (choice media, CSP) and acceptance.
 
 Additional planning references:
 - `\\state.plan.md` — Authoritative living plan (start/end gates, next actions).

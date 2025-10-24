@@ -78,12 +78,14 @@ def append_event(event: Dict[str, Any]) -> None:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO attempt_events(ts, session_id, item_id, item_type, action, correct)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO attempt_events(ts, session_id, serve_id, attempt_id, item_id, item_type, action, correct)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     datetime.now(timezone.utc).isoformat(),
                     event.get("session_id"),
+                    event.get("serve_id"),
+                    event.get("attempt_id"),
                     event.get("item_id"),
                     event.get("item_type"),
                     event.get("action"),
@@ -103,12 +105,14 @@ def read_events_for_session(session_id: str) -> List[Dict[str, Any]]:
         with connect() as conn:
             cur = conn.cursor()
             for row in cur.execute(
-                "SELECT ts, session_id, item_id, item_type, action, correct FROM attempt_events WHERE session_id=? ORDER BY id ASC",
+                "SELECT ts, session_id, serve_id, attempt_id, item_id, item_type, action, correct FROM attempt_events WHERE session_id=? ORDER BY id ASC",
                 (session_id,),
             ):
                 rows.append({
                     "ts": row["ts"],
                     "session_id": row["session_id"],
+                    "serve_id": row["serve_id"],
+                    "attempt_id": row["attempt_id"],
                     "item_id": row["item_id"],
                     "item_type": row["item_type"],
                     "action": row["action"],

@@ -5,6 +5,7 @@ from ..util import randomize_choice_order, make_watermark, canonical_to_serve
 from ..util import get_rate_limiter
 from ..selection import selection_manager
 from .. import selection_repo
+import uuid
 
 router = APIRouter()
 limiter = get_rate_limiter()
@@ -29,6 +30,9 @@ def get_next_item(
         payload = get_mock_item_serve()
     payload = randomize_choice_order(payload)
     payload["serve"]["watermark"] = make_watermark(session_id)
+    # Stretch: include serve_id in payload for logging/analytics
+    serve_id = f"serve_{uuid.uuid4().hex[:8]}"
+    payload["serve"]["id"] = serve_id
     payload["session_id"] = session_id
     # Dev-only event log
     if selection_repo.is_enabled() and session_id != "s_anon":
@@ -37,5 +41,6 @@ def get_next_item(
             "item_id": payload.get("item", {}).get("id"),
             "item_type": payload.get("item", {}).get("type"),
             "action": "served",
+            "serve_id": serve_id,
         })
     return payload

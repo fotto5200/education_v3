@@ -5,7 +5,7 @@ End-to-end spec for how a problem is served to a student: identities, lifecycle,
 
 ### Identities
 - Canonical (authoring): `item.id` (unique per instantiated variant), `template_id` (groups variants), `content_version`.
-- Session/runtime: `session_id` (per user session), `serve_id` [Later], `attempt_id` [Later].
+- Session/runtime: `session_id` (per user session), `serve_id` (per serve), `attempt_id` (per submit).
 - Contract: `contract_version` (e.g., "1.0").
 
 ### Lifecycle (timeline)
@@ -23,11 +23,11 @@ End-to-end spec for how a problem is served to a student: identities, lifecycle,
 ### Client payloads (when each field is sent)
 - Serve snapshot (GET /api/item/next):
   - `version` (contract), `session_id`, `item { id, type, title?, content.html, media[] }`,
-  - optional `item.steps[] { step_id, prompt.html, choices[] { id,text }, serve { choice_order } }`,
-  - `choices[]` at item level for single-step items,
-  - `serve { seed, watermark }`, `ui { layout, actions }`.
+  - optional `item.steps[] { step_id, prompt.html, choices[] { id,text, media[] }, serve { choice_order } }`,
+  - `choices[]` at item level for single-step items (each choice may include `media[]`),
+  - `serve { id, seed, watermark }`, `ui { layout, actions }`.
   - Never include correctness flags, tags, or authoring-only fields.
-- Submit result (POST /api/answer): `{ correct, explanation { html }?, next_step? }`.
+- Submit result (POST /api/answer): `{ correct, explanation { html }?, next_step?, attempt_id }`.
 
 ### Media handling (runtime)
 - Canonical stores `media[].object_key` and `alt`/`long_alt`.
@@ -57,4 +57,4 @@ End-to-end spec for how a problem is served to a student: identities, lifecycle,
 - No keys client-side; one-item endpoints; signed media; randomized order; watermark.
 
 ### Logging (keys)
-- Log `user_id`, `session_id`, `item.id`, `template_id`, `serve.seed`, chosen `choice_id`, result.
+- Log `user_id`, `session_id`, `serve_id`, `attempt_id`, `item.id`, `template_id`, `serve.seed`, chosen `choice_id`, result.

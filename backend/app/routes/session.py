@@ -62,16 +62,18 @@ def export_events_csv(request: Request) -> Response:
         return Response(content="ts,session_id,item_id,item_type,action,correct\n", media_type="text/csv")
     try:
         rows = selection_repo.read_events_for_session(session_id)
-        csv_rows = ["ts,session_id,item_id,item_type,action,correct"]
+        csv_rows = ["ts,session_id,serve_id,attempt_id,item_id,item_type,action,correct"]
         for e in rows:
             ts = (e.get("ts") or "").replace(",", " ")
             sid = e.get("session_id") or ""
+            serve_id = e.get("serve_id") or ""
+            attempt_id = e.get("attempt_id") or ""
             item_id = e.get("item_id") or ""
             item_type = e.get("item_type") or ""
             action = e.get("action") or ""
             correct = "" if (e.get("correct") is None) else ("true" if bool(e.get("correct")) else "false")
             csv_rows.append(
-                ",".join([ts, sid, item_id, item_type, action, correct])
+                ",".join([ts, sid, serve_id, attempt_id, item_id, item_type, action, correct])
             )
         csv_data = "\n".join(csv_rows) + "\n"
         return Response(content=csv_data, media_type="text/csv")

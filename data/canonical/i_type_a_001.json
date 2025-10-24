@@ -12,7 +12,7 @@
       "prompt": { "html": "What is 2 + 3?" },
       "choices": [
         { "id": "A", "text": "4" },
-        { "id": "B", "text": "5" },
+        { "id": "B", "text": "5", "media": [ { "id": "fig1", "object_key": "items/tpl_lorem_001/fig1.svg", "alt": "Sample figure" } ] },
         { "id": "C", "text": "6" },
         { "id": "D", "text": "7" }
       ],

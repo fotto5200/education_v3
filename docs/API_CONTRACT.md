@@ -22,7 +22,7 @@ See also: `LaTeX_Escaping_Guide.md` for escaping rules.
     { "id": "B", "text": "11" },
     { "id": "C", "text": "13" }
   ],
-  "serve": { "seed": "r8xz", "choice_order": ["B","C","A"], "watermark": "u_abc_2025-10-09" },
+  "serve": { "id": "serve_ab12cd34", "seed": "r8xz", "choice_order": ["B","C","A"], "watermark": "u_abc_2025-10-09" },
   "ui": { "layout": "question-above-choices", "actions": ["submit"] }
 }
 ```
@@ -47,12 +47,12 @@ Notes:
 ### Submit step (POST /api/answer)
 Request:
 ```json
-{ "session_id": "s_123", "item_id": "i_456", "step_id": "step_1", "choice_id": "B" }
+{ "session_id": "s_123", "item_id": "i_456", "step_id": "step_1", "choice_id": "B", "serve_id": "serve_ab12cd34" }
 ```
 
 Response:
 ```json
-{ "correct": true, "explanation": { "html": "Correct: 8 + 6 - 5 = 9." }, "next_step": { "id": "step_2" } }
+{ "correct": true, "explanation": { "html": "Correct: 8 + 6 - 5 = 9." }, "next_step": { "id": "step_2" }, "attempt_id": "attempt_ef567890" }
 ```
 
 Schemas: `schemas/submit_step_v1.json`, `schemas/submit_result_v1.json`
@@ -107,7 +107,7 @@ Notes:
 ### Events export (GET /api/events.csv)
 Response: CSV stream with header
 ```
-ts,session_id,item_id,item_type,action,correct
+ts,session_id,serve_id,attempt_id,item_id,item_type,action,correct
 ```
 
 Notes:

@@ -42,6 +42,8 @@ def ensure_tables() -> None:
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   ts TEXT NOT NULL,
                   session_id TEXT NOT NULL,
+                  serve_id TEXT,
+                  attempt_id TEXT,
                   item_id TEXT,
                   item_type TEXT,
                   action TEXT NOT NULL CHECK(action IN ('served','answered')),
@@ -49,6 +51,15 @@ def ensure_tables() -> None:
                 )
                 """
             )
+            # Best-effort add columns for existing dev DBs
+            try:
+                cur.execute("ALTER TABLE attempt_events ADD COLUMN serve_id TEXT")
+            except Exception:
+                pass
+            try:
+                cur.execute("ALTER TABLE attempt_events ADD COLUMN attempt_id TEXT")
+            except Exception:
+                pass
             conn.commit()
     except Exception:
         # Dev-only; fail silently

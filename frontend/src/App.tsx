@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import 'katex/dist/katex.min.css'
 import katex from 'katex'
 
-type Choice = { id: string; text: string }
+type Choice = { id: string; text: string; media?: { id: string; signed_url: string; ttl_s: number; alt: string }[] }
 
 type ServePayload = {
   version: string
@@ -16,7 +16,7 @@ type ServePayload = {
     steps?: { step_id: string; prompt: { html: string }; choices: Choice[]; serve?: { choice_order?: string[] } }[]
   }
   choices?: Choice[]
-  serve: { seed: string; choice_order?: string[]; watermark: string }
+  serve: { id?: string; seed: string; choice_order?: string[]; watermark: string }
 }
 
 type Progress = {
@@ -92,7 +92,7 @@ export default function App() {
     const stepId = data.item.steps && data.item.steps.length > 0
       ? (data.item.steps[currentStepIndex]?.step_id ?? data.item.steps[0].step_id)
       : 'step_1'
-    const body = { session_id: data.session_id, item_id: data.item.id, step_id: stepId, choice_id: selected }
+    const body = { session_id: data.session_id, item_id: data.item.id, step_id: stepId, choice_id: selected, serve_id: data.serve.id }
     const res = await fetch('http://localhost:8000/api/answer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
@@ -160,6 +160,13 @@ export default function App() {
           <label key={ch.id} className="flex items-center gap-2">
             <input type="radio" name="choice" value={ch.id} onChange={() => setSelected(ch.id)} />
             <span>{ch.text}</span>
+            {ch.media && ch.media.length > 0 && (
+              <span className="flex items-center gap-2">
+                {ch.media.map(m => (
+                  <img key={m.id} src={m.signed_url} alt={m.alt} className="h-10 w-auto" />
+                ))}
+              </span>
+            )}
           </label>
         ))}
       </section>

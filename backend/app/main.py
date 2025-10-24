@@ -15,6 +15,7 @@ from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 import inspect
+import os
 
 app = FastAPI(title="Education v3 API", version="0.1.0")
 
@@ -54,6 +55,18 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Dev-friendly CSP header for media origins
+@app.middleware("http")
+async def csp_header(request: Request, call_next):
+    response = await call_next(request)
+    # IMG src allowlist: self + optional extra origins via env IMG_SRC_EXTRA (comma-separated)
+    img_src_extra = os.environ.get("IMG_SRC_EXTRA", "").strip()
+    extras = [o.strip() for o in img_src_extra.split(",") if o.strip()]
+    img_sources = ["'self'"] + extras
+    csp = f"default-src 'self'; img-src {' '.join(img_sources)}; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    response.headers.setdefault("Content-Security-Policy", csp)
+    return response
 
 app.include_router(session_router, prefix="/api", tags=["session"])
 app.include_router(item_router, prefix="/api", tags=["item"])

@@ -56,20 +56,47 @@ def canonical_to_serve(
     top_level_choices: List[Dict[str, Any]] = []
     if steps:
         for step in steps:
+            serve_choices: List[Dict[str, Any]] = []
+            for ch in (step.get("choices") or []):
+                choice_media = []
+                for cm in (ch.get("media") or []):
+                    object_key = cm.get("object_key") or ""
+                    signed_url = f"{media_base_url}/{object_key}"
+                    choice_media.append({
+                        "id": cm.get("id"),
+                        "signed_url": signed_url,
+                        "ttl_s": 120,
+                        "alt": cm.get("alt", ""),
+                    })
+                payload_choice: Dict[str, Any] = {"id": ch.get("id"), "text": ch.get("text")}
+                if choice_media:
+                    payload_choice["media"] = choice_media
+                serve_choices.append(payload_choice)
+
             serve_steps.append(
                 {
                     "step_id": step.get("step_id"),
                     "prompt": {"html": (step.get("prompt") or {}).get("html", "")},
-                    "choices": [
-                        {"id": ch.get("id"), "text": ch.get("text")}
-                        for ch in (step.get("choices") or [])
-                    ],
+                    "choices": serve_choices,
                 }
             )
     else:
-        # Single-step/simple item: expose choices at the top level
+        # Single-step/simple item: expose choices at the top level (with optional media)
         for ch in (canonical.get("steps") or [{}])[0].get("choices", []) if canonical.get("steps") else []:
-            top_level_choices.append({"id": ch.get("id"), "text": ch.get("text")})
+            payload_choice = {"id": ch.get("id"), "text": ch.get("text")}
+            choice_media = []
+            for cm in (ch.get("media") or []):
+                object_key = cm.get("object_key") or ""
+                signed_url = f"{media_base_url}/{object_key}"
+                choice_media.append({
+                    "id": cm.get("id"),
+                    "signed_url": signed_url,
+                    "ttl_s": 120,
+                    "alt": cm.get("alt", ""),
+                })
+            if choice_media:
+                payload_choice["media"] = choice_media
+            top_level_choices.append(payload_choice)  # type: ignore[arg-type]
 
     serve_payload: Dict[str, Any] = {
         "version": contract_version,
