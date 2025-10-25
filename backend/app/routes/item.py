@@ -44,3 +44,20 @@ def get_next_item(
             "serve_id": serve_id,
         })
     return payload
+
+
+@router.get("/item/types")
+def list_item_types(request: Request) -> dict:
+    items = list_canonical_items()
+    types = sorted({(c.get("type") or "").strip().upper() for c in items if isinstance(c.get("type"), str) and c.get("type").strip()})
+    return {"types": types}
+
+
+@router.get("/item/ids")
+def list_item_ids(type: str | None = Query(default=None)) -> dict:
+    items = list_canonical_items()
+    if type:
+        tnorm = (type or "").strip().lower()
+        items = [c for c in items if (c.get("type") or "").strip().lower() == tnorm]
+    ids = [c.get("id") for c in items if isinstance(c.get("id"), str) and c.get("id")]
+    return {"ids": ids}

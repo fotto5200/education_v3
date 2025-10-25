@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, status
 from ..util import get_rate_limiter
+from ..store import list_canonical_items
 from .. import selection_repo
 import os
 
@@ -34,11 +35,17 @@ def readiness(response: Response) -> dict:
     db_enabled = _enabled(os.environ.get("DB_PERSIST_SELECTION"))
 
     # In dev, consider persistence ready regardless of mode; routers will lazily init as needed
+    items = list_canonical_items()
+    seen_types = sorted({(c.get("type") or "").strip().upper() for c in items if isinstance(c.get("type"), str) and c.get("type").strip()})
     diagnostics = {
         "limiter_ok": limiter_ok,
         "persistence": {
             "file": file_enabled,
             "db": db_enabled,
+        },
+        "canonical": {
+            "count": len(items),
+            "types": seen_types,
         },
     }
     return {"status": "ready", **diagnostics}

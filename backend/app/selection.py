@@ -16,6 +16,7 @@ class _SessionState:
         self.last_type: Optional[str] = None
         self.active_type: Optional[str] = None  # queue corresponds to this type (None = all)
         self.serves_in_current_type: int = 0
+        self.playlist_ids: Optional[List[str]] = None  # when set, restrict selection to these ids
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -24,6 +25,7 @@ class _SessionState:
             "last_type": self.last_type,
             "active_type": self.active_type,
             "serves_in_current_type": self.serves_in_current_type,
+            "playlist_ids": list(self.playlist_ids) if self.playlist_ids else None,
         }
 
     @classmethod
@@ -39,6 +41,9 @@ class _SessionState:
             s.serves_in_current_type = int(data.get("serves_in_current_type", 0))
         except Exception:
             s.serves_in_current_type = 0
+        pl = data.get("playlist_ids")
+        if isinstance(pl, list):
+            s.playlist_ids = [str(x) for x in pl if isinstance(x, (str, bytes)) and str(x)]
         return s
 
 
@@ -151,6 +156,10 @@ class SelectionManager:
         else:
             desired_type_norm = self._normalize(state.last_type)
 
+        # When a playlist is active, avoid implicit narrowing by last_type unless explicitly overridden
+        if state.playlist_ids and target_type is None:
+            desired_type_norm = None
+
         # If explicit override changes type, reset counter and force rebuild
         if target_type is not None:
             if self._normalize(target_type) != state.active_type:
@@ -158,25 +167,39 @@ class SelectionManager:
                 state.active_type = None  # force rebuild for new type
                 self._save()
 
-        # Build candidate pool by type (if desired)
+        # Build candidate pool: apply playlist restriction first (if any), then type filter
+        base_pool = list(canonicals)
+        if state.playlist_ids:
+            ids_set = set(state.playlist_ids)
+            base_pool = [c for c in base_pool if (c.get("id") or "") in ids_set]
+            if not base_pool:
+                # If playlist yields nothing, fall back to all canonicals
+                base_pool = list(canonicals)
+
         if desired_type_norm:
-            pool = [c for c in canonicals if self._normalize(c.get("type")) == desired_type_norm]
+            pool = [c for c in base_pool if self._normalize(c.get("type")) == desired_type_norm]
             if not pool:
-                # Fallback to all items if requested type has no candidates
-                pool = list(canonicals)
+                # Fallback to base pool if requested type has no candidates
+                pool = list(base_pool)
                 desired_type_norm = None
         else:
-            pool = list(canonicals)
+            pool = list(base_pool)
 
         # Refill queue if empty or type changed
         if (not state.queue) or (state.active_type != desired_type_norm):
             recent = set(state.recent_ids)
-            candidates = [c for c in pool if (c.get("id") or "") not in recent]
+            # If playlist is active, we want to preserve playlist order; otherwise shuffle
+            if state.playlist_ids:
+                ordered = [c for c in pool if (c.get("id") or "") in set(state.playlist_ids or [])]
+                candidates = [c for c in ordered if (c.get("id") or "") not in recent] or ordered
+            else:
+                candidates = [c for c in pool if (c.get("id") or "") not in recent]
             if not candidates:
                 # Too few items; allow repeats by clearing recent and using pool
                 state.recent_ids.clear()
                 candidates = list(pool)
-            random.shuffle(candidates)
+            if not state.playlist_ids:
+                random.shuffle(candidates)
             state.queue = candidates
             state.active_type = desired_type_norm
             # When (re)building for a type, if that type matches last_type, keep counter; else reset
@@ -202,7 +225,7 @@ class SelectionManager:
             self._save()
 
         # Simple policy: rotate type after N serves (only when no explicit type override present)
-        if policy_name == "simple" and target_type is None and chosen_type_norm:
+        if policy_name == "simple" and target_type is None and chosen_type_norm and not state.playlist_ids:
             if state.serves_in_current_type >= policy_n:
                 # Determine next type and force next call to rebuild queue for it
                 all_types = [c.get("type", "") for c in canonicals]
@@ -213,6 +236,23 @@ class SelectionManager:
                 self._save()
 
         return chosen
+
+    # --- Playlist helpers ---
+    def set_playlist(self, session_id: str, ids: List[str]) -> Dict[str, Any]:
+        state = self._get_state(session_id)
+        valid_ids = [i for i in (ids or []) if isinstance(i, str) and i]
+        state.playlist_ids = valid_ids or None
+        # Reset queue so next call rebuilds using playlist
+        state.queue = []
+        self._save()
+        return state.to_dict()
+
+    def clear_playlist(self, session_id: str) -> Dict[str, Any]:
+        state = self._get_state(session_id)
+        state.playlist_ids = None
+        state.queue = []
+        self._save()
+        return state.to_dict()
 
 
 # Singleton manager for app usage

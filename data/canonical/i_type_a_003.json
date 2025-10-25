@@ -1,0 +1,30 @@
+{
+  "id": "i_type_a_003",
+  "template_id": "tpl_type_a",
+  "content_version": 1,
+  "type": "TYPE_A",
+  "title": "Type A – Sample 3",
+  "content": { "html": "Compute \\(. 3 + 4 \\)." },
+  "media": [
+    { "id": "fig1", "object_key": "items/tpl_lorem_001/fig1.svg", "alt": "Simple addition diagram", "long_alt": "A number line showing a jump from 3 to 7 indicating 3 plus 4 equals 7." }
+  ],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": { "html": "What is 3 + 4?" },
+      "choices": [
+        { "id": "A", "text": "6" },
+        { "id": "B", "text": "7", "media": [ { "id": "m1", "object_key": "items/tpl_lorem_003/fig2.svg", "alt": "Highlighted correct answer", "long_alt": "An icon with a checkmark indicating the correct option corresponds to 7." } ] },
+        { "id": "C", "text": "8" },
+        { "id": "D", "text": "9" }
+      ],
+      "correct_choice_id": "B"
+    }
+  ],
+  "final": { "answer_text": "7", "explanation": { "html": "3 + 4 = 7." } },
+  "tags": { "skill": "skill_a", "difficulty": "E" },
+  "generated_at": "2025-10-24T00:00:00Z",
+  "generator_version": "mock-1"
+}
+
+

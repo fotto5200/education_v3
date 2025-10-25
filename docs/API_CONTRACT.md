@@ -105,6 +105,43 @@ Notes:
 - Scope: current session only; no user identity assumptions.
 
 ### Events export (GET /api/events.csv)
+### Types (GET /api/item/types)
+Response:
+```json
+{ "types": ["TYPE_A", "TYPE_B", "TYPE_C"] }
+```
+
+Notes:
+- Returns unique item types discovered from loaded canonical items (local dev mode).
+- Used by the FE to populate a simple practice type selector.
+
+### Item IDs (GET /api/item/ids)
+List available canonical item IDs; optional type filter.
+
+Query params:
+- `type` (optional): filter IDs to items whose `type` matches (case-insensitive).
+
+Response:
+```json
+{ "ids": ["i_type_a_001", "i_type_a_002"] }
+```
+
+### Playlist (POST/DELETE /api/playlist)
+Set a session-scoped playlist of item IDs to constrain selection:
+
+Request:
+```json
+{ "ids": ["i_type_a_001", "i_type_b_002"] }
+```
+
+Responses:
+```json
+{ "ok": true, "state": { "playlist_ids": ["i_type_a_001","i_type_b_002"], "recent_ids": [], "serves_in_current_type": 0 } }
+```
+
+- DELETE `/api/playlist` clears the playlist.
+- Selection respects playlist first, then optional `?type` filter.
+
 Response: CSV stream with header
 ```
 ts,session_id,serve_id,attempt_id,item_id,item_type,action,correct

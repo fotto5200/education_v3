@@ -1,0 +1,30 @@
+{
+  "id": "i_type_c_003",
+  "template_id": "tpl_type_c",
+  "content_version": 1,
+  "type": "TYPE_C",
+  "title": "Type C – Sample 3",
+  "content": { "html": "Compute \\(. 12 - 7 \\)." },
+  "media": [
+    { "id": "fig1", "object_key": "items/tpl_lorem_003/fig1.svg", "alt": "Difference illustration", "long_alt": "A bar diagram showing 12 split into 7 and 5 to illustrate subtraction." }
+  ],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": { "html": "What is 12 - 7?" },
+      "choices": [
+        { "id": "A", "text": "4" },
+        { "id": "B", "text": "5", "media": [ { "id": "m1", "object_key": "items/tpl_lorem_005/fig2.svg", "alt": "Correct difference", "long_alt": "A checkmark icon next to the number 5 indicating the correct answer." } ] },
+        { "id": "C", "text": "6" },
+        { "id": "D", "text": "7" }
+      ],
+      "correct_choice_id": "B"
+    }
+  ],
+  "final": { "answer_text": "5", "explanation": { "html": "12 - 7 = 5." } },
+  "tags": { "skill": "skill_c", "difficulty": "E" },
+  "generated_at": "2025-10-24T00:00:00Z",
+  "generator_version": "mock-1"
+}
+
+

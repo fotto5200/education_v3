@@ -47,7 +47,8 @@ def canonical_to_serve(
             "id": m.get("id"),
             "signed_url": signed_url,
             "ttl_s": 120,
-            "alt": m.get("alt", "")
+            "alt": m.get("alt", ""),
+            **({"long_alt": m.get("long_alt")} if m.get("long_alt") else {}),
         })
 
     # Build steps (if present) for multi-step items; otherwise use top-level choices
@@ -67,6 +68,7 @@ def canonical_to_serve(
                         "signed_url": signed_url,
                         "ttl_s": 120,
                         "alt": cm.get("alt", ""),
+                        **({"long_alt": cm.get("long_alt")} if cm.get("long_alt") else {}),
                     })
                 payload_choice: Dict[str, Any] = {"id": ch.get("id"), "text": ch.get("text")}
                 if choice_media:
@@ -93,6 +95,7 @@ def canonical_to_serve(
                     "signed_url": signed_url,
                     "ttl_s": 120,
                     "alt": cm.get("alt", ""),
+                    **({"long_alt": cm.get("long_alt")} if cm.get("long_alt") else {}),
                 })
             if choice_media:
                 payload_choice["media"] = choice_media

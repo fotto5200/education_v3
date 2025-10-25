@@ -31,6 +31,7 @@ def load_selection_state() -> Dict[str, Any]:
                     "serves_in_current_type": row["serves_in_current_type"],
                     "recent_window": 5,
                     "recent_ids": json.loads(row["recent_ids_json"] or "[]"),
+                    # playlist_ids persisted later; DB schema remains minimal for dev
                 }
     except Exception:
         return {}

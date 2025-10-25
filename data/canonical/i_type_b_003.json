@@ -1,0 +1,30 @@
+{
+  "id": "i_type_b_003",
+  "template_id": "tpl_type_b",
+  "content_version": 1,
+  "type": "TYPE_B",
+  "title": "Type B – Sample 3",
+  "content": { "html": "Compute \\(. 9 - 3 \\)." },
+  "media": [
+    { "id": "fig1", "object_key": "items/tpl_lorem_002/fig1.svg", "alt": "Simple subtraction diagram", "long_alt": "A number line showing a move left from 9 to 6 indicating subtraction of 3." }
+  ],
+  "steps": [
+    {
+      "step_id": "s1",
+      "prompt": { "html": "What is 9 - 3?" },
+      "choices": [
+        { "id": "A", "text": "5" },
+        { "id": "B", "text": "6", "media": [ { "id": "m1", "object_key": "items/tpl_lorem_004/fig2.svg", "alt": "Correct selection", "long_alt": "An illustration marking the correct difference equals 6." } ] },
+        { "id": "C", "text": "7" },
+        { "id": "D", "text": "8" }
+      ],
+      "correct_choice_id": "B"
+    }
+  ],
+  "final": { "answer_text": "6", "explanation": { "html": "9 - 3 = 6." } },
+  "tags": { "skill": "skill_b", "difficulty": "E" },
+  "generated_at": "2025-10-24T00:00:00Z",
+  "generator_version": "mock-1"
+}
+
+

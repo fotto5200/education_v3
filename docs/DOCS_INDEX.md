@@ -15,6 +15,7 @@
 - `project_onboarding_checklist.md` — Startup workflow and quick scripts.
  - `docs/CURRENT_STATUS.md` — Current local MVP status and next targets.
  - `docs/SPRINT_03_CHOICE_MEDIA_CSP.md` — Sprint 03 scope (choice media, CSP) and acceptance.
+ - `docs/SPRINT_04_PLAYLISTS_SELECTION_UI.md` — Sprint 04 (playlists & selection UI) summary.
 
 Additional planning references:
 - `\\state.plan.md` — Authoritative living plan (start/end gates, next actions).

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import 'katex/dist/katex.min.css'
 import katex from 'katex'
 
-type Choice = { id: string; text: string; media?: { id: string; signed_url: string; ttl_s: number; alt: string }[] }
+type Choice = { id: string; text: string; media?: { id: string; signed_url: string; ttl_s: number; alt: string; long_alt?: string }[] }
 
 type ServePayload = {
   version: string
@@ -11,7 +11,7 @@ type ServePayload = {
     id: string
     type: 'mcq' | string
     content: { html: string }
-    media?: { id: string; signed_url: string; ttl_s: number; alt: string }[]
+    media?: { id: string; signed_url: string; ttl_s: number; alt: string; long_alt?: string }[]
     title?: string
     steps?: { step_id: string; prompt: { html: string }; choices: Choice[]; serve?: { choice_order?: string[] } }[]
   }
@@ -45,30 +45,52 @@ export default function App() {
   const [cooldownTimer, setCooldownTimer] = useState<number | null>(null)
   const [explanationHtml, setExplanationHtml] = useState<string | null>(null)
   const [progress, setProgress] = useState<Progress | null>(null)
+  const [types, setTypes] = useState<string[]>([])
+  const [selectedType, setSelectedType] = useState<string>("")
+  const [playlistIds, setPlaylistIds] = useState<string>("")
 
   useEffect(() => {
-    // Ensure session and obtain CSRF token
+    let cancelled = false
+    // Ensure session and obtain CSRF token, then chain dependent fetches
     fetch('http://localhost:8000/api/session', { method: 'POST', credentials: 'include' })
       .then(r => r.json())
-      .then(j => setCsrf(j.csrf_token))
+      .then(j => {
+        if (cancelled) return
+        setCsrf(j.csrf_token)
+        // Fetch available types
+        fetch('http://localhost:8000/api/item/types', { credentials: 'include' })
+          .then(r => r.json())
+          .then(j2 => {
+            if (cancelled) return
+            const arr = Array.isArray(j2.types) ? j2.types : []
+            setTypes(arr)
+          })
+          .catch(() => {})
+        // Fetch first item
+        fetch('http://localhost:8000/api/item/next', { credentials: 'include' })
+          .then(r => r.json())
+          .then(j3 => {
+            if (cancelled) return
+            setData(j3)
+            // Fallback: seed selector if still empty at this moment
+            if (j3?.item?.type) {
+              setTypes(prev => (prev && prev.length > 0 ? prev : [String(j3.item.type).toUpperCase()]))
+            }
+          })
+          .catch(() => {})
+      })
       .catch(() => {})
-
-    // Fetch next item
-    fetch('http://localhost:8000/api/item/next', { credentials: 'include' })
-      .then(r => r.json())
-      .then(setData)
-      .catch(err => console.error(err))
 
     // Fetch progress
     const fetchProgress = () => {
       fetch('http://localhost:8000/api/progress', { credentials: 'include' })
         .then(r => r.json())
-        .then(setProgress)
+        .then(p => { if (!cancelled) setProgress(p) })
         .catch(() => {})
     }
     fetchProgress()
     const id = window.setInterval(fetchProgress, 2000)
-    return () => window.clearInterval(id)
+    return () => { window.clearInterval(id); cancelled = true }
   }, [])
 
   const orderedChoices: Choice[] = useMemo(() => {
@@ -131,7 +153,41 @@ export default function App() {
     if (json.next_step && data.item.steps && data.item.steps.length > 0) {
       setCurrentStepIndex(idx => Math.min(idx + 1, data.item.steps!.length - 1))
       setSelected(null)
+      return
     }
+    if (json.correct === true) {
+      await onNext()
+    }
+  }
+
+  async function onNext() {
+    const qs = selectedType ? `?type=${encodeURIComponent(selectedType)}` : ''
+    const res = await fetch(`http://localhost:8000/api/item/next${qs}`, { credentials: 'include' })
+    const json = await res.json()
+    setData(json)
+    setSelected(null)
+    setIsCorrect(null)
+    setResult(null)
+    setExplanationHtml(null)
+    setCurrentStepIndex(0)
+  }
+
+  async function applyPlaylist() {
+    if (!csrf) return
+    const ids = playlistIds.split(',').map(s => s.trim()).filter(Boolean)
+    await fetch('http://localhost:8000/api/playlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ids })
+    })
+    // After applying, fetch next item respecting playlist
+    await onNext()
+  }
+
+  async function clearPlaylist() {
+    await fetch('http://localhost:8000/api/playlist', { method: 'DELETE', credentials: 'include' })
+    setPlaylistIds('')
   }
 
   if (!data) return <div className="p-6">Loading…</div>
@@ -139,6 +195,26 @@ export default function App() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
       <header className="text-xl font-semibold">Practice</header>
+      <section className="flex items-end gap-2">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm opacity-80">Practice type</label>
+          <select className="border rounded px-2 py-1" value={selectedType} onChange={e => setSelectedType(e.target.value)}>
+            <option value="">All</option>
+            {types.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
+        <button onClick={onNext} disabled={!csrf} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Next</button>
+      </section>
+      <section className="flex items-end gap-2">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm opacity-80">Playlist item IDs (comma-separated)</label>
+          <input className="border rounded px-2 py-1" value={playlistIds} onChange={e => setPlaylistIds(e.target.value)} placeholder="i_type_a_001,i_type_b_002" />
+        </div>
+        <button onClick={applyPlaylist} disabled={!csrf} className="px-3 py-2 rounded bg-indigo-600 text-white disabled:opacity-50">Apply</button>
+        <button onClick={clearPlaylist} className="px-3 py-2 rounded border">Clear</button>
+      </section>
       <section>
         <MathText html={data.item.content.html} />
       </section>
@@ -148,6 +224,12 @@ export default function App() {
             <figure key={m.id} className="border rounded p-2">
               <img src={m.signed_url} alt={m.alt} className="max-w-full" />
               {m.alt && <figcaption className="text-xs opacity-70 mt-1">{m.alt}</figcaption>}
+              {m.long_alt && (
+                <details className="text-xs mt-1">
+                  <summary className="cursor-pointer">More description</summary>
+                  <div className="opacity-80 mt-1">{m.long_alt}</div>
+                </details>
+              )}
             </figure>
           ))}
         </section>
@@ -163,14 +245,25 @@ export default function App() {
             {ch.media && ch.media.length > 0 && (
               <span className="flex items-center gap-2">
                 {ch.media.map(m => (
-                  <img key={m.id} src={m.signed_url} alt={m.alt} className="h-10 w-auto" />
+                  <span key={m.id} className="flex items-center gap-1">
+                    <img src={m.signed_url} alt={m.alt} className="h-10 w-auto" />
+                    {m.long_alt && (
+                      <details className="text-xs">
+                        <summary className="cursor-pointer">More</summary>
+                        <div className="opacity-80 mt-1 max-w-xs">{m.long_alt}</div>
+                      </details>
+                    )}
+                  </span>
                 ))}
               </span>
             )}
           </label>
         ))}
       </section>
-      <button onClick={onSubmit} disabled={!selected || cooldownMs > 0} className="px-3 py-2 rounded bg-gray-800 text-white disabled:opacity-50">Check answer</button>
+      <div className="flex items-center gap-2">
+        <button onClick={onSubmit} disabled={!selected || cooldownMs > 0} className="px-3 py-2 rounded bg-gray-800 text-white disabled:opacity-50">Check answer</button>
+        <button onClick={onNext} disabled={!csrf} className="px-3 py-2 rounded border">Next item</button>
+      </div>
       {cooldownMs > 0 && (
         <div className="text-xs text-red-600">Too many requests. Try again in {Math.ceil(cooldownMs/1000)}s.</div>
       )}

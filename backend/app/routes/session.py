@@ -2,6 +2,7 @@ from fastapi import APIRouter, Response, Request
 import uuid
 from ..util import sign_csrf_token
 from .. import selection_repo
+from ..selection import selection_manager
 
 # Ensure persistence is initialized when enabled
 selection_repo.init_if_needed()
@@ -79,3 +80,21 @@ def export_events_csv(request: Request) -> Response:
         return Response(content=csv_data, media_type="text/csv")
     except Exception:
         return Response(content="ts,session_id,item_id,item_type,action,correct\n", media_type="text/csv")
+
+# --- Playlist management ---
+@router.post("/playlist")
+def set_playlist(request: Request, body: dict) -> dict:
+    session_id = request.cookies.get(SESSION_COOKIE)
+    ids = body.get("ids") if isinstance(body, dict) else None
+    if not (session_id and isinstance(ids, list)):
+        return {"ok": False}
+    state = selection_manager.set_playlist(session_id, [str(i) for i in ids if isinstance(i, (str, bytes))])
+    return {"ok": True, "state": state}
+
+@router.delete("/playlist")
+def clear_playlist(request: Request) -> dict:
+    session_id = request.cookies.get(SESSION_COOKIE)
+    if not session_id:
+        return {"ok": False}
+    state = selection_manager.clear_playlist(session_id)
+    return {"ok": True, "state": state}
